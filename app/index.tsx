@@ -1,17 +1,19 @@
-import React from "react";
-import { Canvas, Circle, Group } from "@shopify/react-native-skia";
+import {useWindowDimensions} from "react-native";
+import { Canvas, useImage, Image } from "@shopify/react-native-skia";
 
 const App = () => {
-  const width = 256;
-  const height = 256;
+
+  const {width, height} = useWindowDimensions();
+
+  const bg = useImage(require("../assets/sprites/background-day.png"));
+  const bird = useImage(require("../assets/sprites/yellowbird-upflap.png"));
+
+
   const r = width * 0.33;
   return (
     <Canvas style={{ width, height }}>
-      <Group blendMode="multiply">
-        <Circle cx={r} cy={r} r={r} color="cyan" />
-        <Circle cx={width - r} cy={r} r={r} color="magenta" />
-        <Circle cx={width / 2} cy={width - r} r={r} color="yellow" />
-      </Group>
+      <Image image={bg} width={width} height={height} fit="fill" />
+      <Image image={bird} y={height / 2 } x = {width / 4}  width={64} height={48}/>
     </Canvas>
   );
 };
