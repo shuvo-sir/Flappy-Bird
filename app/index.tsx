@@ -30,8 +30,6 @@ const App = () => {
               width={70}
               height={640}
             />
-            
-
     </Canvas>
   );
 };
