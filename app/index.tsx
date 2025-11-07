@@ -1,6 +1,6 @@
 import { Dimensions } from "react-native";
 import { Canvas, useImage, Image } from "@shopify/react-native-skia";
-import { useSharedValue, withTiming } from "react-native-reanimated";
+import { Easing, useSharedValue, withRepeat, withSequence, withTiming } from "react-native-reanimated";
 import { useEffect } from "react";
 
 const App = () => {
@@ -13,10 +13,16 @@ const { width, height } = Dimensions.get("screen");
   const pipeTop = useImage(require("../assets/sprites/pipe-green-top.png"));
   const base = useImage(require("../assets/sprites/base.png"));
 
-  const x = useSharedValue(width - 50);
+  const x = useSharedValue(width);
 
   useEffect(() => {
-    x.value = withTiming(0, {duration: 5000});
+    x.value = withRepeat(
+        withSequence(
+          withTiming(-150, {duration: 3000, easing: Easing.linear}),
+          withTiming(width, {duration: 0})
+      ),
+      -1
+    )
   }, []);
 
   const pipeOffset = 0;
