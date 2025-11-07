@@ -1,8 +1,17 @@
 import { Dimensions } from "react-native";
 import { Canvas, useImage, Image } from "@shopify/react-native-skia";
-import { Easing, useSharedValue, withRepeat, withSequence, withTiming } from "react-native-reanimated";
+import { 
+  Easing, 
+  useFrameCallback, 
+  useSharedValue, 
+  withRepeat, 
+  withSequence, 
+  withTiming,
+} from "react-native-reanimated";
 import { useEffect } from "react";
 
+
+const GRAVITY = 10;
 const App = () => {
 
 const { width, height } = Dimensions.get("screen");
@@ -14,6 +23,17 @@ const { width, height } = Dimensions.get("screen");
   const base = useImage(require("../assets/sprites/base.png"));
 
   const x = useSharedValue(width);
+
+  const birdY = useSharedValue(height / 2);
+  const birdYVelocity = useSharedValue(10);
+
+  useFrameCallback(({timeSincePreviousFrame: dt}) => {
+    if(!dt){
+      return;
+    }
+    birdY.value = birdY.value + (birdYVelocity.value * dt) /1000;
+    birdYVelocity.value = birdYVelocity.value + (GRAVITY * dt) /1000
+  })
 
   useEffect(() => {
     x.value = withRepeat(
@@ -41,7 +61,7 @@ const { width, height } = Dimensions.get("screen");
       />
 
       {/* // bird Image */}
-      <Image image={bird} y={height / 2 } x = {width / 4}  width={64} height={48}/>
+      <Image image={bird} y={birdY} x = {width / 4}  width={64} height={48}/>
 
       {/* // Pipe Image */}
      
