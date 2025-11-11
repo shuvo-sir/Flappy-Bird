@@ -8,6 +8,11 @@ import {
   withSequence, 
   withTiming,
 } from "react-native-reanimated";
+
+import {GestureHandlerRootView,
+  GestureDetector,
+  Gesture} from "react-native-gesture-handler";
+
 import { useEffect } from "react";
 
 
@@ -24,8 +29,8 @@ const { width, height } = Dimensions.get("screen");
 
   const x = useSharedValue(width);
 
-  const birdY = useSharedValue(height / 2);
-  const birdYVelocity = useSharedValue(10);
+  const birdY = useSharedValue(0);
+  const birdYVelocity = useSharedValue(100);
 
   useFrameCallback(({timeSincePreviousFrame: dt}) => {
     if(!dt){
@@ -45,51 +50,59 @@ const { width, height } = Dimensions.get("screen");
     )
   }, []);
 
+
+  const gesture = Gesture.Tap().onStart(() =>{
+    birdYVelocity.value = -300;
+  });
   const pipeOffset = 0;
 
 
   return (
-    <Canvas style={{ flex:1, width, height }}>
-       {/* background Image */}
-      <Image
-        image={bg}
-        x={0}
-        y={0}
-        width={width}
-        height={height}
-        fit="cover"
-      />
+    <GestureHandlerRootView style={{flex: 1}}>
+      <GestureDetector gesture={gesture}>
+        <Canvas style={{ flex:1, width, height }}>
+          {/* background Image */}
+          <Image
+            image={bg}
+            x={0}
+            y={0}
+            width={width}
+            height={height}
+            fit="cover"
+          />
 
-      {/* // bird Image */}
-      <Image image={bird} y={birdY} x = {width / 4}  width={64} height={48}/>
+          {/* // bird Image */}
+          <Image image={bird} y={birdY} x = {width / 4}  width={64} height={48}/>
 
-      {/* // Pipe Image */}
-     
-       <Image
-              image={pipeTop}
-              y={pipeOffset-320}
-              x={x}
-              width={103}
-              height={640}
-            />
-      <Image
-              image={pipeButtom}
-              x={x}
-              y={height - 320 + pipeOffset}
-              width={103}
-              height={640}
-            />
-      
-      <Image
-        image={base}
-        y={height - 75}
-        x={0}
-        width={width}
-        height={150}
-        fit={"cover"}
-      />
+          {/* // Pipe Image */}
+        
+          <Image
+                  image={pipeTop}
+                  y={pipeOffset-320}
+                  x={x}
+                  width={103}
+                  height={640}
+                />
+          <Image
+                  image={pipeButtom}
+                  x={x}
+                  y={height - 320 + pipeOffset}
+                  width={103}
+                  height={640}
+                />
           
-    </Canvas>
+          <Image
+            image={base}
+            y={height - 75}
+            x={0}
+            width={width}
+            height={150}
+            fit={"cover"}
+          />
+              
+        </Canvas>
+      </GestureDetector>
+    </GestureHandlerRootView>
   );
 };
 
