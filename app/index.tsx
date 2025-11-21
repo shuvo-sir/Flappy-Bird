@@ -16,7 +16,9 @@ import {GestureHandlerRootView,
 import { useEffect } from "react";
 
 
-const GRAVITY = 10;
+const GRAVITY = 700;
+const JUMP_FORCE = -400;
+
 const App = () => {
 
 const { width, height } = Dimensions.get("screen");
@@ -29,8 +31,8 @@ const { width, height } = Dimensions.get("screen");
 
   const x = useSharedValue(width);
 
-  const birdY = useSharedValue(0);
-  const birdYVelocity = useSharedValue(100);
+  const birdY = useSharedValue(height / 3);
+  const birdYVelocity = useSharedValue(0);
 
   useFrameCallback(({timeSincePreviousFrame: dt}) => {
     if(!dt){
@@ -38,7 +40,7 @@ const { width, height } = Dimensions.get("screen");
     }
     birdY.value = birdY.value + (birdYVelocity.value * dt) /1000;
     birdYVelocity.value = birdYVelocity.value + (GRAVITY * dt) /1000
-  })
+  });
 
   useEffect(() => {
     x.value = withRepeat(
@@ -47,12 +49,12 @@ const { width, height } = Dimensions.get("screen");
           withTiming(width, {duration: 0})
       ),
       -1
-    )
+    );
   }, []);
 
 
   const gesture = Gesture.Tap().onStart(() =>{
-    birdYVelocity.value = -300;
+    birdYVelocity.value = JUMP_FORCE
   });
   const pipeOffset = 0;
 
@@ -60,7 +62,7 @@ const { width, height } = Dimensions.get("screen");
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <GestureDetector gesture={gesture}>
-        <Canvas style={{ flex:1, width, height }}>
+        <Canvas style={{width, height }}>
           {/* background Image */}
           <Image
             image={bg}
