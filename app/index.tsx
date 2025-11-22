@@ -1,12 +1,14 @@
 import { Dimensions } from "react-native";
-import { Canvas, useImage, Image } from "@shopify/react-native-skia";
+import { Canvas, useImage, Image, Group, rotate } from "@shopify/react-native-skia";
 import { 
   Easing, 
+  useDerivedValue, 
   useFrameCallback, 
   useSharedValue, 
   withRepeat, 
   withSequence, 
   withTiming,
+  interpolate,
 } from "react-native-reanimated";
 
 import {GestureHandlerRootView,
@@ -34,13 +36,17 @@ const { width, height } = Dimensions.get("screen");
   const birdY = useSharedValue(height / 3);
   const birdYVelocity = useSharedValue(0);
 
-  useFrameCallback(({timeSincePreviousFrame: dt}) => {
-    if(!dt){
-      return;
-    }
-    birdY.value = birdY.value + (birdYVelocity.value * dt) /1000;
-    birdYVelocity.value = birdYVelocity.value + (GRAVITY * dt) /1000
+  const birdTransform = useDerivedValue(() => {
+    return [{ rotate: interpolate(birdYVelocity.value, [-400, 400], [-0.4, 0.4])},];
   });
+
+  // useFrameCallback(({timeSincePreviousFrame: dt}) => {
+  //   if(!dt){
+  //     return;
+  //   }
+  //   birdY.value = birdY.value + (birdYVelocity.value * dt) /1000;
+  //   birdYVelocity.value = birdYVelocity.value + (GRAVITY * dt) /1000
+  // });
 
   useEffect(() => {
     x.value = withRepeat(
@@ -74,7 +80,13 @@ const { width, height } = Dimensions.get("screen");
           />
 
           {/* // bird Image */}
-          <Image image={bird} y={birdY} x = {width / 4}  width={64} height={48}/>
+          <Group
+            transform={birdTransform}
+            origin={{x: width / 4 + 32, y: birdY.value + 24}}
+          >
+            <Image image={bird} y={birdY} x = {width / 4}  width={64} height={48}/>
+          </Group>
+          
 
           {/* // Pipe Image */}
         
