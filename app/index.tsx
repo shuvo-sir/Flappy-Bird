@@ -40,13 +40,17 @@ const { width, height } = Dimensions.get("screen");
     return [{ rotate: interpolate(birdYVelocity.value, [-400, 400], [-0.4, 0.4])},];
   });
 
-  // useFrameCallback(({timeSincePreviousFrame: dt}) => {
-  //   if(!dt){
-  //     return;
-  //   }
-  //   birdY.value = birdY.value + (birdYVelocity.value * dt) /1000;
-  //   birdYVelocity.value = birdYVelocity.value + (GRAVITY * dt) /1000
-  // });
+  const birdOrigin = useDerivedValue(() => {
+    return {x: width / 4 + 32, y: birdY.value + 24};
+  });
+
+  useFrameCallback(({timeSincePreviousFrame: dt}) => {
+    if(!dt){
+      return;
+    }
+    birdY.value = birdY.value + (birdYVelocity.value * dt) /1000;
+    birdYVelocity.value = birdYVelocity.value + (GRAVITY * dt) /1000
+  });
 
   useEffect(() => {
     x.value = withRepeat(
@@ -82,7 +86,7 @@ const { width, height } = Dimensions.get("screen");
           {/* // bird Image */}
           <Group
             transform={birdTransform}
-            origin={{x: width / 4 + 32, y: birdY.value + 24}}
+            origin={birdOrigin}
           >
             <Image image={bird} y={birdY} x = {width / 4}  width={64} height={48}/>
           </Group>
